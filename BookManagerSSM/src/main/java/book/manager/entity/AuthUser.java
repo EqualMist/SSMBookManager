@@ -3,7 +3,7 @@ package book.manager.entity;
 import lombok.Data;
 
 @Data
-public class User {
+public class AuthUser {
 
     private int id;
     private String username;

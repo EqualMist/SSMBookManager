@@ -1,5 +1,6 @@
 package book.manager.service;
 
+import book.manager.entity.AuthUser;
 import book.manager.mapper.UserMapper;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -17,14 +18,14 @@ public class UserAuthService implements UserDetailsService {
 
     @Override
     public UserDetails loadUserByUsername(String s) throws UsernameNotFoundException {
-        String password = userMapper.getPasswordByUsername(s); // 从数据库根据用户名获取密码
-        if (password == null) {
+        AuthUser user = userMapper.getUserByUsername(s);
+        if (user.getPassword() == null) {
             throw new UsernameNotFoundException("用户名或密码错误");
         }
         return User //这里需要返回UserDetails，SpringSecurity会根据给定的信息进行比对
-                .withUsername(s)
-                .password(password) //直接从数据库取的密码
-                .roles("user") //用户角色
+                .withUsername(user.getUsername())
+                .password(user.getPassword()) //直接从数据库取的密码
+                .roles(user.getRole()) //用户角色
                 .build();
     }
 }

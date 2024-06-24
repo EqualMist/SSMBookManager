@@ -10,4 +10,10 @@ public class Controller {
         System.out.println("index");
         return "index";
     }
+
+    @RequestMapping("/login")
+    public String login() {
+        System.out.println("login");
+        return "login";
+    }
 }

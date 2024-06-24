@@ -2,10 +2,9 @@
 <!--[if IE 8]> <html lang="en" class="ie8 no-js"> <![endif]-->
 <!--[if IE 9]> <html lang="en" class="ie9 no-js"> <![endif]-->
 <!--[if !IE]><!-->
-<html lang="zxx">
 <!--<![endif]-->
 <!-- Begin Head -->
-
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
     <title>SplashDash</title>
     <meta charset="utf-8">
@@ -280,9 +279,15 @@
                                         </a>
                                     </li>
                                     <li>
-                                        <a href="login.html">
+                                        <a href="logout">
                                             <i class="fas fa-sign-out-alt"></i> logout
                                         </a>
+
+<!--                                        <form action="logout" method="post">-->
+<!--                                            <input type="text" th:name="${_csrf.getParameterName()}" th:value="${_csrf.token}" hidden>-->
+<!--                                            <button>退出登陆</button>-->
+<!--                                        </form>-->
+
                                     </li>
                                 </ul>
                             </div>

@@ -4,7 +4,8 @@
 <!--[if !IE]><!-->
 <!--<![endif]-->
 <!-- Begin Head -->
-<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 <head>
     <title>SplashDash</title>
     <meta charset="utf-8">
@@ -279,7 +280,7 @@
                                         </a>
                                     </li>
                                     <li>
-                                        <a href="logout">
+                                        <a href="api/auth/logout">
                                             <i class="fas fa-sign-out-alt"></i> logout
                                         </a>
 

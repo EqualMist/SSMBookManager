@@ -1,8 +1,6 @@
-package book.manager.service;
+package book.manager.service.serviceImpl;
 
 import org.springframework.security.access.prepost.PostFilter;
-import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.security.access.prepost.PreFilter;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;

@@ -1,6 +1,6 @@
 package book.manager.config;
 
-import book.manager.service.UserAuthService;
+import book.manager.service.serviceImpl.UserAuthService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -9,20 +9,12 @@ import org.springframework.security.config.annotation.method.configuration.Enabl
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
-import org.springframework.security.web.authentication.rememberme.InMemoryTokenRepositoryImpl;
 import org.springframework.security.web.authentication.rememberme.JdbcTokenRepositoryImpl;
 import org.springframework.security.web.authentication.rememberme.PersistentTokenRepository;
 
 import javax.annotation.Resource;
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import javax.sql.DataSource;
-import java.io.IOException;
 
 @EnableWebSecurity
 @Configuration
@@ -47,17 +39,16 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
     protected void configure(HttpSecurity http) throws Exception {
         http
                 .authorizeRequests()   //首先需要配置哪些请求会被拦截，哪些请求必须具有什么角色才能访问
-                .antMatchers("/static/**", "/auth").permitAll()    //静态资源，使用permitAll来运行任何人访问（注意一定要放在前面）
+                .antMatchers("/static/**", "/login", "/register", "/api/auth/**").permitAll()    //静态资源，使用permitAll来运行任何人访问（注意一定要放在前面）
                 .anyRequest().hasRole("user")
                 .and()
                 .formLogin()
                 .loginPage("/login")
-                .loginProcessingUrl("/doLogin")
+                .loginProcessingUrl("/api/auth/login")
                 .defaultSuccessUrl("/index")
-                .permitAll()
                 .and()
                 .logout()
-                .logoutUrl("/logout")
+                .logoutUrl("/api/auth/logout")
                 .logoutSuccessUrl("/login")
                 .and()
                 .csrf().disable() //关闭CSRF防护，因为我们没有使用表单提交数据，所以不需要防护

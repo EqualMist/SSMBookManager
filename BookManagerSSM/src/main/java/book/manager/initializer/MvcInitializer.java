@@ -19,8 +19,6 @@ public class MvcInitializer extends AbstractAnnotationConfigDispatcherServletIni
      */
     @Override
     public void onStartup(ServletContext servletContext) throws ServletException {
-        servletContext.addFilter("characterEncodingFilter", new CharacterEncodingFilter("UTF-8", true))
-                .addMappingForUrlPatterns(null, false, "/*");
         super.onStartup(servletContext);
     }
 

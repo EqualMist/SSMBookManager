@@ -1,10 +1,17 @@
 package book.manager.controller;
 
+import book.manager.entity.AuthUser;
+import book.manager.mapper.UserMapper;
 import book.manager.service.serviceImpl.SimpleService;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.SessionAttribute;
 
 import javax.annotation.Resource;
+import javax.servlet.http.HttpSession;
 
 @Controller
 public class PageController {
@@ -12,21 +19,23 @@ public class PageController {
     @Resource
     private SimpleService simpleService;
 
-//    @PreAuthorize("hasRole('admin')")
+    @Resource
+    private UserMapper userMapper;
+
     @RequestMapping("/admin")
     public String admin() {
         return "index";
     }
 
-//    @PreAuthorize("hasAnyRole('user', 'admin')")
-//    @PostAuthorize("hasRole('admin')")
     @RequestMapping("/index")
-    public String index() {
-//        SecurityContext context = SecurityContextHolder.getContext();
-//        Authentication authentication = context.getAuthentication();
-//        User user = (User) authentication.getPrincipal();
-//        System.out.println(user.getUsername());
-//        System.out.println(user.getAuthorities());
+    public String index(HttpSession session, Model model) {
+        AuthUser user = (AuthUser) session.getAttribute("user");
+        if (user == null) {
+            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+            AuthUser authUser = userMapper.getUserByUsername(authentication.getName());
+            session.setAttribute("user", authUser);
+        }
+        model.addAttribute("user", user);
         return "index";
     }
 

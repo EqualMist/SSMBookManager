@@ -1,5 +1,7 @@
 package book.manager.config;
 
+import book.manager.entity.AuthUser;
+import book.manager.mapper.UserMapper;
 import book.manager.service.serviceImpl.UserAuthService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
@@ -9,12 +11,18 @@ import org.springframework.security.config.annotation.method.configuration.Enabl
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 import org.springframework.security.web.authentication.rememberme.JdbcTokenRepositoryImpl;
 import org.springframework.security.web.authentication.rememberme.PersistentTokenRepository;
 
 import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 import javax.sql.DataSource;
+import java.io.IOException;
 
 @EnableWebSecurity
 @Configuration
@@ -26,6 +34,9 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 
     @Resource
     PersistentTokenRepository persistentTokenRepository;
+
+    @Resource
+    UserMapper userMapper;
 
     @Bean
     public PersistentTokenRepository jdbcRepository(@Autowired DataSource dataSource){
@@ -40,12 +51,12 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
         http
                 .authorizeRequests()   //首先需要配置哪些请求会被拦截，哪些请求必须具有什么角色才能访问
                 .antMatchers("/static/**", "/login", "/register", "/api/auth/**").permitAll()    //静态资源，使用permitAll来运行任何人访问（注意一定要放在前面）
-                .anyRequest().hasRole("user")
+                .anyRequest().hasAnyRole("user", "admin")
                 .and()
                 .formLogin()
                 .loginPage("/login")
                 .loginProcessingUrl("/api/auth/login")
-                .defaultSuccessUrl("/index")
+                .successHandler(this::onAuthenticationSuccess)
                 .and()
                 .logout()
                 .logoutUrl("/api/auth/logout")
@@ -58,6 +69,8 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
                 .tokenRepository(persistentTokenRepository);
 
     }
+
+
 
     @Override
     protected void configure(AuthenticationManagerBuilder auth) throws Exception {
@@ -72,5 +85,12 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
                 .userDetailsService(userAuthService)
                 .passwordEncoder(encoder);
 
+    }
+
+    private void onAuthenticationSuccess (HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException {
+        HttpSession session = request.getSession();
+        AuthUser authUser = userMapper.getUserByUsername(authentication.getName());
+        session.setAttribute("user", authUser);
+        response.sendRedirect("/bookmanager/index");
     }
 }

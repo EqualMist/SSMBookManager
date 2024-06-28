@@ -1,9 +1,7 @@
-package book.manager.controller;
+package book.manager.controller.api;
 
 import book.manager.service.AuthService;
-import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;

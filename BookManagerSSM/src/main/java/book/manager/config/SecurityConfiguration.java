@@ -50,11 +50,13 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
     protected void configure(HttpSecurity http) throws Exception {
         http
                 .authorizeRequests()   //首先需要配置哪些请求会被拦截，哪些请求必须具有什么角色才能访问
-                .antMatchers("/static/**", "/login", "/register", "/api/auth/**").permitAll()    //静态资源，使用permitAll来运行任何人访问（注意一定要放在前面）
+                .antMatchers("/static/**", "/page/auth/**", "/api/auth/**").permitAll()    //静态资源，使用permitAll来运行任何人访问（注意一定要放在前面）
+                .antMatchers("/page/user/**").hasRole("user")
+                .antMatchers("/page/admin/**").hasRole("admin")
                 .anyRequest().hasAnyRole("user", "admin")
                 .and()
                 .formLogin()
-                .loginPage("/login")
+                .loginPage("/page/auth/login")
                 .loginProcessingUrl("/api/auth/login")
                 .successHandler(this::onAuthenticationSuccess)
                 .and()
@@ -91,6 +93,10 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
         HttpSession session = request.getSession();
         AuthUser authUser = userMapper.getUserByUsername(authentication.getName());
         session.setAttribute("user", authUser);
-        response.sendRedirect("/bookmanager/index");
+        if (authUser.getRole().equals("admin")) {
+            response.sendRedirect("/bookmanager/page/admin/index");
+        } else{
+            response.sendRedirect("/bookmanager/page/user/index");
+        }
     }
 }

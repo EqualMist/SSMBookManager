@@ -1,6 +1,7 @@
 package book.manager.service;
 
 import book.manager.entity.Book;
+import book.manager.entity.BorrowDetails;
 
 import java.util.List;
 
@@ -19,4 +20,6 @@ public interface BookService {
     void borrowBook(Integer bid, Integer uid);
 
     void returnBook(Integer bid, Integer uid);
+
+    List<BorrowDetails> getBorrowDetails();
 }

@@ -2,6 +2,7 @@ package book.manager.mapper;
 
 import book.manager.entity.Book;
 import book.manager.entity.Borrow;
+import book.manager.entity.BorrowDetails;
 import org.apache.ibatis.annotations.*;
 
 import java.util.List;
@@ -32,4 +33,15 @@ public interface BookMapper {
 
     @Delete("DELETE FROM borrow WHERE bid = #{bid} AND sid = #{sid}")
     void returnBook(@Param("bid") Integer bid, @Param("sid") Integer sid);
+
+    @Select("SELECT borrow.id, book.title as bookTitle, student.name as username, borrow.time FROM borrow " +
+            "left join student on student.sid = borrow.sid " +
+            "left join book on book.bid = borrow.bid")
+    List<BorrowDetails> getBorrowDetails();
+
+    @Select("SELECT count(1) from book")
+    Integer getBookCount();
+
+    @Select("SELECT count(1) from borrow")
+    Integer getBorrowCount();
 }

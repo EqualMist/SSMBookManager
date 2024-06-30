@@ -18,4 +18,7 @@ public interface UserMapper {
 
     @Select("SELECT sid FROM student WHERE uid = #{uid}")
     Integer getSidByUid(Integer uid);
+
+    @Select("SELECT count(1) FROM users")
+    Integer getUserCount();
 }
